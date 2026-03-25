@@ -16,7 +16,7 @@ import {
   formatDate,
   type Provider,
 } from "@/lib/data"
-import { History, ArrowUpRight, ArrowDownLeft } from "lucide-react"
+import { History, ArrowUpRight, Sparkles } from "lucide-react"
 
 export function TransactionHistory() {
   const [filter, setFilter] = useState<Provider | "all">("all")
@@ -31,7 +31,7 @@ export function TransactionHistory() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <History className="h-5 w-5" />
-          Transaction History
+          Usage & Recovery
         </CardTitle>
         <Select
           value={filter}
@@ -52,7 +52,7 @@ export function TransactionHistory() {
         <div className="space-y-4">
           {filteredTransactions.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              No transactions found
+              No credit usage events found
             </p>
           ) : (
             filteredTransactions.map((transaction) => (
@@ -63,21 +63,22 @@ export function TransactionHistory() {
                 <div className="flex items-center gap-3">
                   <div
                     className={`rounded-full p-2 ${
-                      transaction.type === "payment"
-                        ? "bg-destructive/10"
+                      transaction.type === "allocation"
+                        ? "bg-muted"
                         : "bg-success/10"
                     }`}
                   >
-                    {transaction.type === "payment" ? (
-                      <ArrowUpRight className="h-4 w-4 text-destructive" />
+                    {transaction.type === "allocation" ? (
+                      <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <ArrowDownLeft className="h-4 w-4 text-success" />
+                      <Sparkles className="h-4 w-4 text-success" />
                     )}
                   </div>
                   <div>
                     <p className="font-medium">{transaction.recipient}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatDate(transaction.date)}
+                    <p className="text-sm text-muted-foreground" suppressHydrationWarning>
+                      {formatDate(transaction.date)} &middot;{" "}
+                      {transaction.type === "allocation" ? "Allocated externally" : "Recovered"}
                     </p>
                   </div>
                 </div>
@@ -104,12 +105,12 @@ export function TransactionHistory() {
                   </Badge>
                   <p
                     className={`font-bold ${
-                      transaction.type === "payment"
-                        ? "text-destructive"
-                        : "text-success"
+                      transaction.type === "recovery"
+                        ? "text-success"
+                        : ""
                     }`}
                   >
-                    {transaction.type === "payment" ? "-" : "+"}
+                    {transaction.type === "recovery" ? "+" : ""}
                     {formatCurrency(transaction.amount)}
                   </p>
                 </div>

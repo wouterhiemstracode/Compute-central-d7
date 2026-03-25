@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Zap, Bell, Settings } from "lucide-react"
+import { Cpu, Bell, Settings, Cloud } from "lucide-react"
 
 export function DashboardHeader() {
   return (
@@ -10,12 +10,12 @@ export function DashboardHeader() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-primary p-2">
-              <Zap className="h-5 w-5 text-primary-foreground" />
+              <Cpu className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Compute Exchange</h1>
+              <h1 className="text-xl font-bold">Compute Central</h1>
               <p className="text-xs text-muted-foreground">
-                Trade cloud credits as currency
+                Track, recover, and reallocate compute credits across companies
               </p>
             </div>
           </div>
@@ -28,7 +28,10 @@ export function DashboardHeader() {
               <Settings className="h-4 w-4" />
               <span className="sr-only">Settings</span>
             </Button>
-            <Button size="sm">Connect Wallet</Button>
+            <Button size="sm" variant="outline">
+              <Cloud className="h-4 w-4 mr-2" />
+              Connect Provider
+            </Button>
           </div>
         </div>
       </div>
