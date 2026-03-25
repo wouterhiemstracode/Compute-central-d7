@@ -15,7 +15,7 @@ export function DashboardHeader() {
             <div>
               <h1 className="text-xl font-bold">Compute Central</h1>
               <p className="text-xs text-muted-foreground">
-                Track, optimize, and recover cloud compute credits
+                Track, recover, and reallocate compute credits across companies
               </p>
             </div>
           </div>

@@ -3,7 +3,11 @@ import { PortfolioOverview } from "@/components/portfolio-overview"
 import { RecoveredValueBanner } from "@/components/recovered-value-banner"
 import { CreditBreakdown } from "@/components/credit-breakdown"
 import { PortfolioChart } from "@/components/portfolio-chart"
-import { PayWithCompute } from "@/components/pay-with-compute"
+import { ExpiringCreditsSupply } from "@/components/expiring-credits-supply"
+import { ComputeDemand } from "@/components/compute-demand"
+import { MatchingEngine } from "@/components/matching-engine"
+import { ValueBreakdown } from "@/components/value-breakdown"
+import { PlatformFlow } from "@/components/platform-flow"
 import { TransactionHistory } from "@/components/transaction-history"
 import { OptimizationAlert } from "@/components/optimization-alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -22,29 +26,40 @@ export default function ComputeCentralDashboard() {
         
         {/* Portfolio Overview Stats */}
         <section>
-          <h2 className="text-lg font-semibold mb-4">Credit Efficiency</h2>
+          <h2 className="text-lg font-semibold mb-4">Platform Metrics</h2>
           <PortfolioOverview />
         </section>
 
         {/* Main Dashboard Content */}
-        <Tabs defaultValue="efficiency" className="space-y-6">
+        <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-flex">
-            <TabsTrigger value="efficiency">Efficiency</TabsTrigger>
-            <TabsTrigger value="allocate">Allocate</TabsTrigger>
-            <TabsTrigger value="history">Usage & Recovery</TabsTrigger>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="efficiency" className="space-y-6">
+          <TabsContent value="overview" className="space-y-6">
+            {/* How it works */}
+            <PlatformFlow />
+            
             <div className="grid gap-6 lg:grid-cols-2">
               <CreditBreakdown />
               <PortfolioChart />
             </div>
+            
+            {/* Value breakdown */}
+            <ValueBreakdown />
           </TabsContent>
 
-          <TabsContent value="allocate">
-            <div className="max-w-lg">
-              <PayWithCompute />
+          <TabsContent value="marketplace" className="space-y-6">
+            {/* Supply and Demand tables */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <ExpiringCreditsSupply />
+              <ComputeDemand />
             </div>
+            
+            {/* Matching Engine */}
+            <MatchingEngine />
           </TabsContent>
 
           <TabsContent value="history">
@@ -56,9 +71,12 @@ export default function ComputeCentralDashboard() {
       {/* Footer */}
       <footer className="border-t mt-16">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
             <p>Compute Central</p>
-            <p>Track, optimize, and recover cloud compute credits</p>
+            <p className="text-center italic text-xs">
+              All allocations are simulated. Cloud providers currently do not support direct transfer of credits.
+            </p>
+            <p>Track, recover, and reallocate compute credits</p>
           </div>
         </div>
       </footer>

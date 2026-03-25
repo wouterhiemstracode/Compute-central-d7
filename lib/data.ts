@@ -1,4 +1,4 @@
-// Mock data for Compute Central - Credit Efficiency Tracker
+// Mock data for Compute Central - Credit Marketplace & Allocation Platform
 
 export type Provider = "aws" | "gcp" | "azure"
 
@@ -10,6 +10,8 @@ export interface CreditBalance {
   usedValue: number
   expiredValue: number
   recoveredValue: number
+  allocatedValue: number
+  availableForAllocation: number
   expirationDate: Date
   monthlyBurn: number
   color: string
@@ -33,15 +35,49 @@ export interface Transaction {
   type: "allocation" | "recovery"
 }
 
+// New types for marketplace
+export interface CreditSupply {
+  id: string
+  company: string
+  provider: Provider
+  credits: number
+  expiresInMonths: number
+  valueAtRisk: number
+  suggestedSellValue: number
+}
+
+export interface ComputeDemand {
+  id: string
+  company: string
+  monthlyUsage: number
+  provider: Provider
+  budget: number
+  urgency: "high" | "medium" | "low"
+}
+
+export interface CreditMatch {
+  id: string
+  supplier: string
+  buyer: string
+  amount: number
+  provider: Provider
+  supplierRecovered: number
+  buyerSaved: number
+  platformFee: number
+  status: "matched" | "pending"
+}
+
 export const creditBalances: CreditBalance[] = [
   {
     provider: "aws",
     name: "Amazon Web Services",
     credits: 120000,
     dollarValue: 120000,
-    usedValue: 108000,
+    usedValue: 78000,
     expiredValue: 2400,
     recoveredValue: 9600,
+    allocatedValue: 18000,
+    availableForAllocation: 12000,
     expirationDate: new Date("2026-09-25"),
     monthlyBurn: 18000,
     color: "var(--chart-1)",
@@ -51,9 +87,11 @@ export const creditBalances: CreditBalance[] = [
     name: "Google Cloud Platform",
     credits: 50000,
     dollarValue: 50000,
-    usedValue: 36000,
+    usedValue: 26000,
     expiredValue: 5200,
     recoveredValue: 8800,
+    allocatedValue: 7000,
+    availableForAllocation: 3000,
     expirationDate: new Date("2026-06-25"),
     monthlyBurn: 12000,
     color: "var(--chart-2)",
@@ -63,12 +101,138 @@ export const creditBalances: CreditBalance[] = [
     name: "Microsoft Azure",
     credits: 30000,
     dollarValue: 30000,
-    usedValue: 25000,
+    usedValue: 20000,
     expiredValue: 1800,
     recoveredValue: 3200,
+    allocatedValue: 3000,
+    availableForAllocation: 2000,
     expirationDate: new Date("2026-12-25"),
     monthlyBurn: 5000,
     color: "var(--chart-3)",
+  },
+]
+
+// Marketplace data: Companies with expiring credits (supply)
+export const creditSupply: CreditSupply[] = [
+  {
+    id: "s1",
+    company: "TechFlow Inc",
+    provider: "aws",
+    credits: 20000,
+    expiresInMonths: 2,
+    valueAtRisk: 12000,
+    suggestedSellValue: 6000,
+  },
+  {
+    id: "s2",
+    company: "DataPipe Labs",
+    provider: "gcp",
+    credits: 10000,
+    expiresInMonths: 1,
+    valueAtRisk: 8000,
+    suggestedSellValue: 3000,
+  },
+  {
+    id: "s3",
+    company: "CloudFirst Co",
+    provider: "aws",
+    credits: 15000,
+    expiresInMonths: 3,
+    valueAtRisk: 6000,
+    suggestedSellValue: 4500,
+  },
+  {
+    id: "s4",
+    company: "Nimbus Systems",
+    provider: "azure",
+    credits: 8000,
+    expiresInMonths: 2,
+    valueAtRisk: 4000,
+    suggestedSellValue: 2400,
+  },
+]
+
+// Marketplace data: Companies needing compute (demand)
+export const computeDemand: ComputeDemand[] = [
+  {
+    id: "d1",
+    company: "ScaleUp AI",
+    monthlyUsage: 5000,
+    provider: "aws",
+    budget: 4000,
+    urgency: "high",
+  },
+  {
+    id: "d2",
+    company: "BuildFast Dev",
+    monthlyUsage: 8000,
+    provider: "gcp",
+    budget: 6000,
+    urgency: "medium",
+  },
+  {
+    id: "d3",
+    company: "Rapid Deploy",
+    monthlyUsage: 3000,
+    provider: "aws",
+    budget: 2500,
+    urgency: "high",
+  },
+  {
+    id: "d4",
+    company: "ML Forge",
+    monthlyUsage: 12000,
+    provider: "azure",
+    budget: 9000,
+    urgency: "low",
+  },
+]
+
+// Completed matches
+export const creditMatches: CreditMatch[] = [
+  {
+    id: "m1",
+    supplier: "TechFlow Inc",
+    buyer: "ScaleUp AI",
+    amount: 5000,
+    provider: "aws",
+    supplierRecovered: 2500,
+    buyerSaved: 1000,
+    platformFee: 250,
+    status: "matched",
+  },
+  {
+    id: "m2",
+    supplier: "DataPipe Labs",
+    buyer: "BuildFast Dev",
+    amount: 7000,
+    provider: "gcp",
+    supplierRecovered: 2800,
+    buyerSaved: 1400,
+    platformFee: 350,
+    status: "matched",
+  },
+  {
+    id: "m3",
+    supplier: "CloudFirst Co",
+    buyer: "Rapid Deploy",
+    amount: 3000,
+    provider: "aws",
+    supplierRecovered: 1500,
+    buyerSaved: 600,
+    platformFee: 150,
+    status: "matched",
+  },
+  {
+    id: "m4",
+    supplier: "Nimbus Systems",
+    buyer: "ML Forge",
+    amount: 4000,
+    provider: "azure",
+    supplierRecovered: 2000,
+    buyerSaved: 800,
+    platformFee: 200,
+    status: "matched",
   },
 ]
 
@@ -183,6 +347,35 @@ export function getTotalCreditsRecovered(): number {
   return creditBalances.reduce((sum, b) => sum + b.recoveredValue, 0)
 }
 
+export function getTotalCreditsAllocated(): number {
+  return creditBalances.reduce((sum, b) => sum + b.allocatedValue, 0)
+}
+
+export function getTotalAvailableForAllocation(): number {
+  return creditBalances.reduce((sum, b) => sum + b.availableForAllocation, 0)
+}
+
+// Marketplace calculations
+export function getTotalCreditsMatched(): number {
+  return creditMatches.reduce((sum, m) => sum + m.amount, 0)
+}
+
+export function getTotalSupplierValueRecovered(): number {
+  return creditMatches.reduce((sum, m) => sum + m.supplierRecovered, 0)
+}
+
+export function getTotalBuyerSavings(): number {
+  return creditMatches.reduce((sum, m) => sum + m.buyerSaved, 0)
+}
+
+export function getTotalPlatformFees(): number {
+  return creditMatches.reduce((sum, m) => sum + m.platformFee, 0)
+}
+
+export function getTotalValueCreated(): number {
+  return getTotalSupplierValueRecovered() + getTotalBuyerSavings()
+}
+
 export function getUtilizationPercent(): number {
   const total = getTotalCreditsReceived()
   const used = getTotalCreditsUsed()
@@ -233,6 +426,7 @@ export function formatDate(date: Date): string {
     month: "short",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   }).format(date)
 }
 
@@ -265,4 +459,8 @@ export function calculateOptimizationSuggestions(): {
 
 export function getTotalAtRisk(): number {
   return calculateOptimizationSuggestions().reduce((sum, s) => sum + s.atRisk, 0)
+}
+
+export function getTotalSupplyAtRisk(): number {
+  return creditSupply.reduce((sum, s) => sum + s.valueAtRisk, 0)
 }

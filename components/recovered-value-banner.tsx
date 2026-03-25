@@ -1,10 +1,11 @@
 "use client"
 
-import { getTotalCreditsRecovered, formatCurrency } from "@/lib/data"
+import { getTotalValueCreated, formatCurrency, getTotalCreditsMatched } from "@/lib/data"
 import { Sparkles } from "lucide-react"
 
 export function RecoveredValueBanner() {
-  const totalRecovered = getTotalCreditsRecovered()
+  const totalValueCreated = getTotalValueCreated()
+  const totalMatched = getTotalCreditsMatched()
 
   return (
     <div className="rounded-lg bg-success/10 border border-success/30 p-4">
@@ -14,10 +15,11 @@ export function RecoveredValueBanner() {
         </div>
         <div>
           <p className="font-semibold text-success text-lg">
-            {formatCurrency(totalRecovered)} in compute credits recovered
+            {formatCurrency(totalValueCreated)} in value created through credit matching
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            Recovered credits = credits used or allocated before expiry that would have otherwise been lost.
+            {formatCurrency(totalMatched)} in credits successfully matched from suppliers to buyers, 
+            saving credits that would have otherwise expired.
           </p>
         </div>
       </div>

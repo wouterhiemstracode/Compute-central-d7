@@ -6,17 +6,21 @@ import {
   getTotalCreditsUsed,
   getTotalCreditsExpired,
   getTotalCreditsRecovered,
+  getTotalCreditsMatched,
+  getTotalValueCreated,
   getUtilizationPercent,
   getRecoveryPercent,
   formatCurrency,
 } from "@/lib/data"
-import { TrendingUp, Activity, XCircle, Sparkles } from "lucide-react"
+import { TrendingUp, Activity, XCircle, Sparkles, Link2, Zap } from "lucide-react"
 
 export function PortfolioOverview() {
   const totalReceived = getTotalCreditsReceived()
   const totalUsed = getTotalCreditsUsed()
   const totalExpired = getTotalCreditsExpired()
   const totalRecovered = getTotalCreditsRecovered()
+  const totalMatched = getTotalCreditsMatched()
+  const totalValueCreated = getTotalValueCreated()
   const utilizationPercent = getUtilizationPercent()
   const recoveryPercent = getRecoveryPercent()
 
@@ -49,10 +53,24 @@ export function PortfolioOverview() {
       description: `${recoveryPercent}% recovered vs lost`,
       accent: "success",
     },
+    {
+      title: "Credits Matched",
+      value: formatCurrency(totalMatched),
+      icon: Link2,
+      description: "Allocated to other companies",
+      accent: "primary",
+    },
+    {
+      title: "Value Created",
+      value: formatCurrency(totalValueCreated),
+      icon: Zap,
+      description: "Supplier savings + buyer savings",
+      accent: "success",
+    },
   ]
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {stats.map((stat) => (
         <Card
           key={stat.title}
@@ -61,6 +79,8 @@ export function PortfolioOverview() {
               ? "ring-2 ring-success/30 bg-success/5"
               : stat.accent === "destructive"
               ? "bg-destructive/5"
+              : stat.accent === "primary"
+              ? "ring-2 ring-primary/30 bg-primary/5"
               : ""
           }`}
         >
@@ -74,6 +94,8 @@ export function PortfolioOverview() {
                   ? "text-success"
                   : stat.accent === "destructive"
                   ? "text-destructive"
+                  : stat.accent === "primary"
+                  ? "text-primary"
                   : "text-muted-foreground"
               }`}
             />
@@ -85,6 +107,8 @@ export function PortfolioOverview() {
                   ? "text-success"
                   : stat.accent === "destructive"
                   ? "text-destructive"
+                  : stat.accent === "primary"
+                  ? "text-primary"
                   : ""
               }`}
             >
