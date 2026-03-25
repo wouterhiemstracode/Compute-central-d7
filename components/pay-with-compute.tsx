@@ -46,11 +46,11 @@ export function PayWithCompute() {
     (b) => b.provider === selectedProvider
   )
 
-  const handlePay = () => {
+  const handleAllocate = () => {
     setShowConfirmation(true)
   }
 
-  const confirmPayment = () => {
+  const confirmAllocation = () => {
     setShowConfirmation(false)
     setShowSuccess(true)
     setTimeout(() => {
@@ -70,15 +70,15 @@ export function PayWithCompute() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Send className="h-5 w-5" />
-            Pay with Compute
+            Allocate Credits
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="recipient">Recipient Company</Label>
+            <Label htmlFor="recipient">Recipient</Label>
             <Select value={recipient} onValueChange={setRecipient}>
               <SelectTrigger id="recipient">
-                <SelectValue placeholder="Select vendor or enter company" />
+                <SelectValue placeholder="Select vendor or service" />
               </SelectTrigger>
               <SelectContent>
                 {vendors.map((vendor) => (
@@ -153,7 +153,7 @@ export function PayWithCompute() {
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Credits to deduct</span>
+                <span className="text-muted-foreground">Credits to allocate</span>
                 <span className="font-medium">{formatCurrency(parseFloat(amount))}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -169,9 +169,9 @@ export function PayWithCompute() {
             className="w-full"
             size="lg"
             disabled={!isValid}
-            onClick={handlePay}
+            onClick={handleAllocate}
           >
-            Review Payment
+            Review Allocation
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </CardContent>
@@ -180,9 +180,9 @@ export function PayWithCompute() {
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Payment</DialogTitle>
+            <DialogTitle>Confirm Allocation</DialogTitle>
             <DialogDescription>
-              Review the details of your compute credit payment
+              Review the details of your credit allocation
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -203,7 +203,7 @@ export function PayWithCompute() {
             <Button variant="outline" onClick={() => setShowConfirmation(false)}>
               Cancel
             </Button>
-            <Button onClick={confirmPayment}>Confirm Payment</Button>
+            <Button onClick={confirmAllocation}>Confirm Allocation</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -215,10 +215,10 @@ export function PayWithCompute() {
               <CheckCircle2 className="h-12 w-12 text-success" />
             </div>
             <DialogHeader className="text-center">
-              <DialogTitle className="text-center">Payment Successful!</DialogTitle>
+              <DialogTitle className="text-center">Allocation Successful!</DialogTitle>
               <DialogDescription className="text-center">
                 {formatCurrency(parseFloat(amount || "0"))} in{" "}
-                {selectedProvider.toUpperCase()} credits has been transferred to{" "}
+                {selectedProvider.toUpperCase()} credits has been allocated to{" "}
                 {recipient}.
               </DialogDescription>
             </DialogHeader>

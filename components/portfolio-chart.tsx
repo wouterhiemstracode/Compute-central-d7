@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { creditBalances, formatCurrency } from "@/lib/data"
+import { creditBalances, formatCurrency, getMonthsUntilExpiry } from "@/lib/data"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 
 const COLORS = {
@@ -11,18 +11,24 @@ const COLORS = {
 }
 
 export function PortfolioChart() {
-  const data = creditBalances.map((b) => ({
-    name: b.provider.toUpperCase(),
-    value: b.dollarValue,
-    color: COLORS[b.provider],
-  }))
+  const data = creditBalances.map((b) => {
+    const monthsLeft = getMonthsUntilExpiry(b.expirationDate)
+    const projectedUsage = b.monthlyBurn * monthsLeft
+    const atRisk = Math.max(0, b.dollarValue - projectedUsage)
+    return {
+      name: b.provider.toUpperCase(),
+      value: b.dollarValue,
+      atRisk,
+      color: COLORS[b.provider],
+    }
+  })
 
   const totalValue = creditBalances.reduce((sum, b) => sum + b.dollarValue, 0)
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Portfolio Distribution</CardTitle>
+        <CardTitle>Credit Allocation & Risk</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-8">
@@ -56,6 +62,9 @@ export function PortfolioChart() {
           <div className="space-y-3 flex-1">
             {creditBalances.map((balance) => {
               const percentage = ((balance.dollarValue / totalValue) * 100).toFixed(1)
+              const monthsLeft = getMonthsUntilExpiry(balance.expirationDate)
+              const projectedUsage = balance.monthlyBurn * monthsLeft
+              const atRisk = Math.max(0, balance.dollarValue - projectedUsage)
               return (
                 <div key={balance.provider} className="flex items-center gap-3">
                   <div
@@ -71,9 +80,16 @@ export function PortfolioChart() {
                         {percentage}%
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {formatCurrency(balance.dollarValue)}
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        {formatCurrency(balance.dollarValue)}
+                      </p>
+                      {atRisk > 0 && (
+                        <p className="text-xs text-destructive">
+                          {formatCurrency(atRisk)} at risk
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               )

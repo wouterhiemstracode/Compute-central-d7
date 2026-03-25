@@ -1,4 +1,4 @@
-// Mock data for Compute Credits Exchange
+// Mock data for Compute Central - Credit Efficiency Tracker
 
 export type Provider = "aws" | "gcp" | "azure"
 
@@ -7,6 +7,9 @@ export interface CreditBalance {
   name: string
   credits: number
   dollarValue: number
+  usedValue: number
+  expiredValue: number
+  recoveredValue: number
   expirationDate: Date
   monthlyBurn: number
   color: string
@@ -27,7 +30,7 @@ export interface Transaction {
   recipient: string
   amount: number
   provider: Provider
-  type: "payment" | "received"
+  type: "allocation" | "recovery"
 }
 
 export const creditBalances: CreditBalance[] = [
@@ -36,6 +39,9 @@ export const creditBalances: CreditBalance[] = [
     name: "Amazon Web Services",
     credits: 120000,
     dollarValue: 120000,
+    usedValue: 108000,
+    expiredValue: 2400,
+    recoveredValue: 9600,
     expirationDate: new Date("2026-09-25"),
     monthlyBurn: 18000,
     color: "var(--chart-1)",
@@ -45,6 +51,9 @@ export const creditBalances: CreditBalance[] = [
     name: "Google Cloud Platform",
     credits: 50000,
     dollarValue: 50000,
+    usedValue: 36000,
+    expiredValue: 5200,
+    recoveredValue: 8800,
     expirationDate: new Date("2026-06-25"),
     monthlyBurn: 12000,
     color: "var(--chart-2)",
@@ -54,6 +63,9 @@ export const creditBalances: CreditBalance[] = [
     name: "Microsoft Azure",
     credits: 30000,
     dollarValue: 30000,
+    usedValue: 25000,
+    expiredValue: 1800,
+    recoveredValue: 3200,
     expirationDate: new Date("2026-12-25"),
     monthlyBurn: 5000,
     color: "var(--chart-3)",
@@ -110,7 +122,7 @@ export const transactions: Transaction[] = [
     recipient: "DataStream Analytics",
     amount: 8500,
     provider: "aws",
-    type: "payment",
+    type: "allocation",
   },
   {
     id: "2",
@@ -118,7 +130,7 @@ export const transactions: Transaction[] = [
     recipient: "DevForge Tools",
     amount: 3200,
     provider: "gcp",
-    type: "payment",
+    type: "allocation",
   },
   {
     id: "3",
@@ -126,15 +138,15 @@ export const transactions: Transaction[] = [
     recipient: "CloudOps Consulting",
     amount: 12000,
     provider: "aws",
-    type: "payment",
+    type: "allocation",
   },
   {
     id: "4",
     date: new Date("2026-03-10"),
-    recipient: "TechStart Inc",
+    recipient: "Credits recovered before expiry",
     amount: 5000,
     provider: "azure",
-    type: "received",
+    type: "recovery",
   },
   {
     id: "5",
@@ -142,17 +154,48 @@ export const transactions: Transaction[] = [
     recipient: "MLPipeline Pro",
     amount: 18000,
     provider: "gcp",
-    type: "payment",
+    type: "allocation",
   },
   {
     id: "6",
     date: new Date("2026-02-28"),
-    recipient: "SecureVault",
+    recipient: "Credits recovered before expiry",
     amount: 4500,
     provider: "aws",
-    type: "payment",
+    type: "recovery",
   },
 ]
+
+// Summary calculations
+export function getTotalCreditsReceived(): number {
+  return creditBalances.reduce((sum, b) => sum + b.dollarValue, 0)
+}
+
+export function getTotalCreditsUsed(): number {
+  return creditBalances.reduce((sum, b) => sum + b.usedValue, 0)
+}
+
+export function getTotalCreditsExpired(): number {
+  return creditBalances.reduce((sum, b) => sum + b.expiredValue, 0)
+}
+
+export function getTotalCreditsRecovered(): number {
+  return creditBalances.reduce((sum, b) => sum + b.recoveredValue, 0)
+}
+
+export function getUtilizationPercent(): number {
+  const total = getTotalCreditsReceived()
+  const used = getTotalCreditsUsed()
+  return Math.round((used / total) * 100)
+}
+
+export function getRecoveryPercent(): number {
+  const recovered = getTotalCreditsRecovered()
+  const expired = getTotalCreditsExpired()
+  const atRisk = recovered + expired
+  if (atRisk === 0) return 100
+  return Math.round((recovered / atRisk) * 100)
+}
 
 export function getProviderIcon(provider: Provider): string {
   switch (provider) {
@@ -218,4 +261,8 @@ export function calculateOptimizationSuggestions(): {
     })
     .filter((suggestion) => suggestion.atRisk > 0)
     .sort((a, b) => b.atRisk - a.atRisk)
+}
+
+export function getTotalAtRisk(): number {
+  return calculateOptimizationSuggestions().reduce((sum, s) => sum + s.atRisk, 0)
 }
