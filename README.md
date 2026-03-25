@@ -1,105 +1,141 @@
-# Compute as a Medium of Exchange
+# Compute Credit Marketplace
 
-This is a simple prototype exploring a question:
+A prototype exploring a simple idea:
 
-> What happens if compute becomes a resource companies transact with — not just consume?
+> What if expiring compute credits could be reallocated instead of lost?
+
+---
+
+## The problem
+
+Many startups receive large amounts of cloud credits (AWS, Google Cloud, Azure).
+
+These credits:
+
+- expire over time  
+- are locked to specific providers  
+- often go underutilized  
+
+At the same time, other startups are actively spending cash on compute.
+
+This creates a clear inefficiency:
+
+> some companies are losing compute value, while others are paying full price for it.
 
 ---
 
 ## The idea
 
-AI companies today are increasingly compute-heavy.
+This project explores a system where:
 
-At the same time, many startups sit on large amounts of cloud credits (AWS, Google Cloud, Azure). These credits are:
+- companies with expiring credits can “sell” them at a discount  
+- companies with compute demand can use that capacity at a lower cost  
+- a platform sits in between and allocates usage  
 
-- non-transferable  
-- tied to a single provider  
-- expiring over time  
+Instead of transferring credits directly (which isn’t supported today), the system simulates:
 
-Meanwhile, those same companies are paying vendors, tools, and contractors in cash — which is often their scarcest resource.
-
-This creates a mismatch:
-
-> companies are rich in compute, but transact in cash.
+> reallocating compute usage from one company to another
 
 ---
 
 ## What this prototype does
 
-This dashboard simulates a world where compute is treated as a usable economic resource.
+This dashboard combines three layers:
 
-It includes:
-
-- **Real compute usage tracking** (via OpenAI API usage)
-- **Simulated multi-cloud credits** (AWS, GCP, Azure)
-- A simple **“pay with compute” flow**
-- **Transaction history** for compute-based payments
-
-The goal is not to build infrastructure, but to make the idea tangible.
+### 1. Credit tracking
+- tracks compute credits across providers  
+- highlights expiration timelines  
+- identifies value at risk  
 
 ---
 
-## Demo
+### 2. Recovery & efficiency
+- shows how much compute is used vs lost  
+- calculates **recovered value** (credits used before expiry)  
+- surfaces projected losses  
 
-_(add screenshots or a Loom here)_
+Example:
+
+> “You are projected to lose $12,400 in credits over the next 90 days.”
 
 ---
 
-## How it works
+### 3. Marketplace simulation
+- models a supply side (expiring credits)  
+- models a demand side (companies needing compute)  
+- simulates matching between the two  
 
-### 1. Compute tracking
-Tracks API usage and translates it into cost over time.
+This allows:
 
-### 2. Credit layer (simulated)
-Represents cloud credits as balances with:
+- suppliers to recover value from credits that would otherwise expire  
+- buyers to access discounted compute  
+- the platform to capture a small fee  
 
-- expiration timelines  
-- remaining value  
-- burn rate  
+---
 
-### 3. Transactions (simulated)
-Allows sending “compute” to another company by deducting credits.
+## Key concept: Value recovery
+
+Recovered compute represents credits that would have expired, but were instead used productively.
+
+Example:
+
+- $50k credits received  
+- $20k used internally  
+- $15k allocated to others  
+- $15k would have expired  
+
+→ $15k in value recovered  
 
 ---
 
 ## Why this matters
 
-Right now, the flow looks like:
+Today, the flow looks like:
 
-1. A company converts cash → compute  
-2. Builds a product  
-3. Charges another company in cash  
-4. That company converts cash → compute again  
+1. Cash → compute  
+2. Compute is partially used  
+3. Unused credits expire  
 
-Value leaves the infrastructure layer and then returns to it.
+At the same time:
 
-This prototype explores a simpler model:
+1. Another company spends cash → compute  
 
-> What if value stayed inside the compute layer?
+This project explores a more efficient system:
+
+> keeping value inside the compute layer instead of letting it expire.
+
+---
+
+## Important note
+
+Cloud providers (AWS, GCP, Azure) currently:
+
+- do not allow transfer of credits  
+- design credits to be non-transferable  
+
+This prototype does NOT implement real transfers.
+
+Instead, it simulates how compute usage could be reallocated across companies.
 
 ---
 
 ## Open questions
 
-This project is mainly a conversation starter.
-
-Some questions that come up:
-
-- Would companies actually accept compute as payment?  
-- How would pricing work across different providers?  
-- Who intermediates trust between companies?  
-- Would cloud providers ever allow this?  
-- Does this reduce friction enough to matter?  
+- How much compute value is currently wasted across startups?  
+- Would companies sell expiring credits at a discount?  
+- Would others rely on third-party compute allocation?  
+- How would trust and execution work in practice?  
+- Would cloud providers ever support or restrict this further?  
 
 ---
 
 ## What this is not
 
-- Not a crypto project  
-- Not a real payments system  
+- Not a crypto or token system  
+- Not a real payments platform  
 - Not integrated with cloud providers  
 
-It’s a lightweight prototype to explore a direction.
+This is a lightweight prototype to explore a real inefficiency.
 
 ---
 
@@ -108,4 +144,3 @@ It’s a lightweight prototype to explore a direction.
 ```bash
 npm install
 npm run dev
-
